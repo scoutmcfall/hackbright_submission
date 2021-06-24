@@ -1,0 +1,87 @@
+#!/bin/python3
+
+
+#
+# Complete the 'delivery_summary' function below.
+#
+
+def delivery_summary(deliveries_ordered, rush_deliveries, meals_purchased):
+    """
+    Parameters:
+      deliveries_ordered: How many deliveries each customer ordered.
+      rush_deliveries: How many deliveries each customer rushed.
+      meals_purchased: How many total meals the customer purchased.
+    """
+    #Report:
+      #1.Summary of earnings for each customer
+      #2.Total earnings for all customers
+      #3.Total earned from delivery fees
+      #4.Customer that spent the most
+
+#define cost lists because that's what I'll be reporting (b/c the input is counts)  
+    deliveries_cost = []
+    rush_cost = []
+    meal_cost = []
+
+#for loop that creates cost list for delivery category by multiplying by cost amt
+    cust_count = len(deliveries_ordered)#makes it flexible by # of customers
+    for i in range(cust_count):
+        #account for 10 for $60 deal
+        if deliveries_ordered[i]>9:
+            #divide by 10, format for no decimal *60, then add %*7.25
+            deliveries_cost.append((int(deliveries_ordered[i]/10)*60)+((deliveries_ordered[i] % 10) * 7.25))
+        else: #if it's 9 or fewer
+            deliveries_cost.append(deliveries_ordered[i]*7.25)
+#for loop that creates costs lists for rush/meal by * by respective cost amnt 
+    for i in range(cust_count):        
+        #deliveries_cost.append(deliveries_ordered[i]*7.25)
+        rush_cost.append(rush_deliveries[i]*2.00)
+        meal_cost.append(meals_purchased[i]*12.50)
+    
+#use a for loop to create a list of customer totals the length of which is cust_count (number of customers)
+    totals_list = []
+    for i in range(cust_count):
+        totals_list.append(deliveries_cost[i] + rush_cost[i]+ meal_cost[i])
+        
+#sum customer totals_list to get grand total (total_cost)
+    total_cost = sum(totals_list)
+     
+#this totals dictionary is for finding who spent the most by tying customer # to total $amt 
+    total_dict = {}
+    for i in range (cust_count):
+        total_dict[i+1] = totals_list[i]
+
+#this is where the printing starts    
+    print("Welcome to the Ada Meal Delivery Dashboard")
+    print() 
+
+#1. "A summary of earnings for each customer"
+#format the numbers as dollar/cents using .format
+    for i in range(cust_count):
+        print('Customer', i+1,'paid', '${:.2f}'.format(totals_list[i]),'total')
+        print('>>>', '${:.2f}'.format(deliveries_cost[i]), 'in delivery fees')
+        print('>>>', '${:.2f}'.format(rush_cost[i]), 'in rush delivery fees')
+        print('>>>', '${:.2f}'.format(meal_cost[i]), 'in meal fees')
+        print()
+
+#2. "The total earnings for all customers." formatting for $_.__
+    print('Combined all customers paid','${:.2f}'.format(total_cost), 'total')
+
+#3. The total earned from delivery fees (rush and standard delivery fees)formatting for $_.__
+    total_delivery_fee = []
+    total_delivery_fee = (sum(deliveries_cost) + sum(rush_cost))
+    print('Delivery fees (standard and Rush Delivery) were','${:.2f}'.format(total_delivery_fee),'total')
+    print()
+    
+#4. The customer that spent the most (by sorting the totals_list and printing the last(highest) entry)
+    totals_list.sort() 
+    print('${:.2f}'.format(totals_list[-1]),'was the most paid by any single customer')
+
+#Search the customer totals dictionary for the keys with the max value, make a list of the keys, then print w/out quotes/brackets
+    l=list(key for key, value in total_dict.items() if value == totals_list[-1])
+    big_spender = (str(l)[1:-1]) #removes quotes/brackets
+#add the # to the beginning of the customer numbers by splitting the list, adding the #, then joining the list again
+    num_list = big_spender.split(", ")
+    formatted_list = ["#"+num for num in num_list]
+    num_spender = ", ".join(formatted_list)
+    print('The customer(s) that paid the most were:', num_spender) 
